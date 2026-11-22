@@ -1,0 +1,9 @@
+node_modules/
+.expo/
+dist/
+expo-env.d.ts
+.env
+
+# Generated native projects (Expo prebuild)
+/android/
+/ios/

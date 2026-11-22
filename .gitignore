@@ -1,0 +1,41 @@
+# ---- Dependencies
+node_modules/
+# ---- Secrets: never commit. Keep the *.example files instead.
+.env
+.env.*
+!.env.example
+!**/.env.example
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+signing.properties
+gradle.properties
+# ---- Build output and caches
+dist/
+build/
+out/
+.expo/
+*.tsbuildinfo
+expo-env.d.ts
+coverage/
+# ---- Generated native projects (Expo prebuild). Configure native behaviour in app.json and app.config.js instead.
+/mobile/android/
+/mobile/ios/
+# ---- Built phone apps
+/apk/
+*.apk
+*.aab
+# ---- Logs and editor/OS noise
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Notes for coding agents (kept on the owner's machine only)
+AGENTS.md

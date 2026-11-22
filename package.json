@@ -1,0 +1,28 @@
+{
+  "name": "oracle",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Oracle: the phone app (Expo) and the shared logic. A money tracker for many bank accounts and e-wallets.",
+  "workspaces": [
+    "mobile",
+    "shared/*"
+  ],
+  "scripts": {
+    "start": "npm run start -w @oracle/mobile",
+    "android": "npm run android -w @oracle/mobile",
+    "web": "npm run web -w @oracle/mobile",
+    "export:web": "npm run export:web -w @oracle/mobile",
+    "check:i18n": "npm run check:i18n -w @oracle/mobile",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "eslint": "^10.15.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.73.0"
+  }
+}
