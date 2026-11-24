@@ -1,7 +1,9 @@
-import { AI_MAX_MESSAGES, type AiChange, type AiChatResponse, type AiDraft, type AiMessage, type BudgetsResponse } from "@oracle/core";
+import { AI_MAX_MESSAGES, type AiChange, type AiChatResponse, type AiDraft, type AiMessage } from "@oracle/core";
 import { useSyncExternalStore } from "react";
-import { getLanguage, t } from "@/i18n";
+import { getLanguage, setLanguagePreference, t } from "@/i18n";
 import { api } from "./api";
+import { setAppearance } from "./appearance";
+import { runChange } from "./change-request";
 import { type ChatItem, type PendingQuestion, loadChat, saveChat } from "./chat-store";
 import { errorMessage } from "./hooks";
 import { getView } from "./view-context";
@@ -176,26 +178,19 @@ export async function confirmAllDrafts(itemId: number): Promise<void> {
 /** Applies one proposed change through the same endpoints the screens use. Returns true when it worked. */
 export async function confirmChange(itemId: number, c: AiChange): Promise<boolean> {
   patchChange(itemId, c.id, { state: "saving" });
-  try {
-    if (c.type === "edit_transaction") await api.patch(`/transactions/${c.transactionId}`, c.patch);
-    else if (c.type === "delete_transaction") await api.delete(`/transactions/${c.transactionId}`);
-    else if (c.type === "create_category") await api.post("/categories", { name: c.name, kind: c.kind, icon: c.icon });
-    else if (c.type === "create_account") await api.post("/accounts", { providerId: null, name: c.name, type: c.accountType, initialBalance: c.initialBalance, initialBalanceDate: c.date, includeInTotal: true });
-    else if (c.type === "rename_account") await api.patch(`/accounts/${c.accountId}`, { name: c.to });
-    else if (c.type === "update_balance") await api.post(`/accounts/${c.accountId}/balance-checks`, { actualBalance: c.to, date: c.date });
-    else {
-      // A budget call replaces the whole month, so the other limits are read again first and kept.
-      const now = await api.get<BudgetsResponse>("/budgets", { month: c.month });
-      const items = now.items.filter((i) => i.categoryId !== c.categoryId).map((i) => ({ categoryId: i.categoryId, amount: i.budget }));
-      if (c.to > 0) items.push({ categoryId: c.categoryId, amount: c.to });
-      await api.put(`/budgets/${c.month}`, { items });
-    }
+  const res = await runChange(c, {
+    get: (path, query) => api.get(path, query),
+    send: (method, path, body) => (method === "POST" ? api.post(path, body) : method === "PATCH" ? api.patch(path, body) : method === "PUT" ? api.put(path, body) : api.delete(path)),
+    setTheme: setAppearance,
+    setLanguage: setLanguagePreference,
+    describe: errorMessage,
+  });
+  if (res.ok) {
     patchChange(itemId, c.id, { state: "saved" });
     return true;
-  } catch (e) {
-    patchChange(itemId, c.id, { state: "pending", error: errorMessage(e) });
-    return false;
   }
+  patchChange(itemId, c.id, { state: "pending", error: res.message });
+  return false;
 }
 
 export async function confirmAllChanges(itemId: number): Promise<void> {

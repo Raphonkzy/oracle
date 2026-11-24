@@ -16,6 +16,13 @@ export type ChatItem = {
 const MAX_ITEMS = 100;
 const keyFor = (userId: string) => `oracle.chat.v1.${userId}`;
 
+/** The change types the app knows. A saved card of any other type (such as the removed account cards) is dropped on load. */
+const CHANGE_TYPES: readonly string[] = [
+  "edit_transaction", "delete_transaction", "edit_transfer", "delete_transfer", "set_budget", "create_category",
+  "rename_category", "hide_category", "set_cycle_start", "set_theme", "set_language",
+] satisfies AiChange["type"][];
+const isKnownChange = (c: unknown): boolean => !!c && typeof c === "object" && CHANGE_TYPES.includes(String((c as { change?: { type?: unknown } }).change?.type));
+
 const isItem = (v: unknown): v is ChatItem => {
   if (!v || typeof v !== "object") return false;
   const i = v as Record<string, unknown>;
@@ -37,7 +44,7 @@ export async function loadChat(userId: string): Promise<{ items: ChatItem[]; pen
       ...i,
       // A draft that was being saved when the app closed is not known to be saved: show it as waiting again.
       drafts: i.drafts?.map((d) => (d.state === "saving" ? { ...d, state: "pending" as const } : d)),
-      changes: i.changes?.map((d) => (d.state === "saving" ? { ...d, state: "pending" as const } : d)),
+      changes: i.changes?.filter(isKnownChange).map((d) => (d.state === "saving" ? { ...d, state: "pending" as const } : d)),
     }));
     return { items, pending };
   } catch {

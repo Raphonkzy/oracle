@@ -446,5 +446,9 @@ const dictionary: Record<string, string> = {
   "Tap a bar to see its amount.": "点按柱形查看金额。",
   "This is taking long. You can send it again.": "耗时较长。你可以再发送一次。",
   "Where your money is": "你的钱在哪里",
+  "Change a transfer": "修改转账",
+  "Day {day} of the month": "每月{day}日",
+  "Delete a transfer": "删除转账",
+  "Rename a category": "重命名分类",
 };
 export default dictionary;

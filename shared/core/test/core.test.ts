@@ -28,6 +28,7 @@ import {
   rowTitle,
   summarize,
   transferInput,
+  transferPatchInput,
   type LedgerRow,
 } from "../src/index";
 
@@ -126,6 +127,19 @@ describe("request schemas", () => {
     const ok = transferInput.parse({ fromAccountId: "00000000-0000-4000-8000-000000000001", toAccountId: "00000000-0000-4000-8000-000000000002", amount: 100, date: "2026-11-19" });
     assert.equal(ok.fee, 0);
     assert.equal(transferInput.safeParse({ ...ok, toAccountId: ok.fromAccountId }).success, false);
+  });
+  it("transfer patch adds no defaults and needs one field", () => {
+    const amountOnly = transferPatchInput.parse({ amount: 500 });
+    assert.deepEqual(amountOnly, { amount: 500 });
+    assert.equal("fee" in amountOnly, false);
+    assert.equal("note" in amountOnly, false);
+    assert.equal(transferPatchInput.safeParse({}).success, false);
+    assert.equal(transferPatchInput.parse({ note: null }).note, null);
+    assert.equal(transferPatchInput.parse({ fee: 0 }).fee, 0);
+  });
+  it("transfer create still rejects the same account on both sides", () => {
+    const a = "00000000-0000-4000-8000-000000000001";
+    assert.equal(transferInput.safeParse({ fromAccountId: a, toAccountId: a, amount: 1, date: "2026-11-19" }).success, false);
   });
   it("account patch needs at least one field", () => {
     assert.equal(accountPatchInput.safeParse({}).success, false);

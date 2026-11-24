@@ -48,7 +48,7 @@ export const APP_GUIDE: GuideEntry[] = [
       "Change the amount, account, category, description or date and tap [[Save changes]], or tap [[Delete]].",
     ],
     notes: [
-      "A transfer cannot be edited. Delete it and create it again. Deleting a transfer removes both sides and its fee.",
+      "The assistant can change or delete a transfer as a card that you confirm. You can also open the transfer and tap [[Delete]], which removes both sides and the fee.",
       "Changes and deletions that would leave an account below zero are refused.",
     ],
   },
@@ -57,9 +57,10 @@ export const APP_GUIDE: GuideEntry[] = [
     topic: "Add, view or archive accounts, e-wallets, bank accounts and bills",
     keywords: ["account", "bank", "wallet", "gopay", "dana", "cash", "rekening", "dompet", "tagihan", "paylater", "kartu kredit", "saldo"],
     steps: [
-      "Open [[Profile]], then [[Accounts & bills]]. You can also tap the big balance card on [[Home]].",
+      "Open [[Profile]], then [[Accounts & bills]]. You can also tap the [[Total balance]] card on [[Home]].",
       "Tap [[Add accounts]] to add a bank, e-wallet, cash or a bill (paylater or credit card).",
-      "Tap an account to see its statement. There you can use [[Update balance]] or [[Archive account]].",
+      "Tap an account to see its statement. There you can use [[Update balance]].",
+      "To archive an account, tap the [[Total balance]] card on [[Home]], open the account, then tap [[Archive account]]. An archived account can be restored with [[Restore account]].",
     ],
     notes: [
       "Paylater and credit cards are bills: you type how much you owe, and it counts against your total.",
@@ -103,7 +104,11 @@ export const APP_GUIDE: GuideEntry[] = [
     topic: "Add, rename or hide categories",
     keywords: ["category", "kategori", "icon"],
     steps: ["Open [[Profile]], then [[Categories]].", "Add a new one, or tap a category to rename it or change its icon."],
-    notes: ["The category used for transfer fees cannot be renamed or removed."],
+    notes: [
+      "The category used for transfer fees cannot be renamed or removed.",
+      "To hide a category, open it and tap [[Hide category]]. Past transactions keep it. Its budgets are removed.",
+      "The assistant can rename or hide a category as a card that you confirm. It cannot bring a hidden category back.",
+    ],
   },
   {
     id: "month-start",
@@ -113,7 +118,8 @@ export const APP_GUIDE: GuideEntry[] = [
       "Open [[Profile]], then [[Preferences]], then [[Month starts on]].",
       "Choose [[1st of the month]], or [[A day I choose]] and pick the day you are paid.",
     ],
-    notes: ["Home, Stats, Budget and the assistant then count a month from that day to the day before the next one. Weeks, years and account statements stay on the calendar."],
+    notes: [
+      "The assistant can change this for you as a card that you confirm.","Home, Stats, Budget and the assistant then count a month from that day to the day before the next one. Weeks, years and account statements stay on the calendar."],
   },
   {
     id: "language",
@@ -126,6 +132,7 @@ export const APP_GUIDE: GuideEntry[] = [
     topic: "Change how the app looks (theme)",
     keywords: ["theme", "appearance", "dark", "light", "color", "tema", "tampilan", "warna", "gelap", "terang"],
     steps: ["Open [[Profile]], then [[Preferences]], then [[Appearance]].", "Pick [[Oracle]], [[Oracle Day]], [[Oracle Midnight]] or [[System]]. The change shows at once and is remembered."],
+    notes: ["The assistant can change the look for you as a card that you confirm."],
   },
   {
     id: "privacy",
@@ -149,7 +156,11 @@ export const APP_GUIDE: GuideEntry[] = [
     keywords: ["name", "password", "sign out", "logout", "nama", "kata sandi", "keluar"],
     steps: [
       "Open [[Profile]]. Tap [[Your name]] to change the name, or [[Sign out]] to leave.",
-      "On the sign-in screen, [[Forgot password?]] sends a code by email when the server can send email.",
+      "On the sign-in screen, [[Forgot password?]] sends a code by email when the server can send email. This is the way to change the password, and the reset signs out every device.",
+    ],
+    notes: [
+      "Signing out puts the look back to Oracle. The language stays.",
+      "The chat cannot change the password, sign out other devices or delete the account.",
     ],
   },
   {

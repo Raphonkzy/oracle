@@ -10,7 +10,9 @@ import { Card, Header, Screen, T } from "@/components/ui";
 import { t } from "@/i18n";
 import { formatMonthTitle } from "@/i18n/format";
 import { authClient } from "@/lib/auth-client";
+import { resetAppearance } from "@/lib/appearance";
 import { setDemoSignedIn } from "@/lib/demo";
+import { endSession } from "@/lib/session-end";
 import { useApi } from "@/lib/hooks";
 import { useReportView } from "@/lib/view-context";
 import { colors } from "@/theme";
@@ -27,9 +29,7 @@ export default function Profile() {
   async function signOut() {
     const ok = await confirmDialog({ title: t("Sign out"), message: t("You will need to sign in again."), confirmLabel: t("Sign out"), destructive: true });
     if (!ok) return;
-    clearAssistantChat();
-    setDemoSignedIn(false);
-    void authClient.signOut();
+    await endSession({ clearChat: clearAssistantChat, resetTheme: resetAppearance, setDemoSignedIn, authSignOut: () => authClient.signOut() }).catch(() => {});
   }
 
   const since = user ? formatMonthTitle(user.createdAt.slice(0, 7)) : "";

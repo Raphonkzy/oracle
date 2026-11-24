@@ -446,5 +446,9 @@ const dictionary: Record<string, string> = {
   "Tap a bar to see its amount.": "Нажмите на столбик, чтобы увидеть сумму.",
   "This is taking long. You can send it again.": "Это занимает много времени. Можно отправить ещё раз.",
   "Where your money is": "Где ваши деньги",
+  "Change a transfer": "Изменить перевод",
+  "Day {day} of the month": "{day}-е число месяца",
+  "Delete a transfer": "Удалить перевод",
+  "Rename a category": "Переименовать категорию",
 };
 export default dictionary;

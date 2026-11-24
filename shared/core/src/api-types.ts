@@ -1,4 +1,4 @@
-import type { AccountType, CategoryKind, Period, ThemeName } from "./constants";
+import type { AccountType, CategoryKind, LanguageCode, Period, ThemeName } from "./constants";
 import type { RingSegment } from "./dashboard";
 import type { LedgerRow } from "./ledger";
 
@@ -136,11 +136,20 @@ export type AiDraft = {
   fee: number;
 };
 /** One thing a change card shows: what a field is now, and what it would become. Money is whole rupiah, dates are YYYY-MM-DD. */
-export type AiFieldChange = { field: "amount" | "date" | "description" | "category" | "account"; from: string | number | null; to: string | number | null };
+export type AiFieldChange = {
+  field: "amount" | "date" | "description" | "category" | "account" | "fee" | "from_account" | "to_account";
+  from: string | number | null;
+  to: string | number | null;
+};
+/** The body for PATCH /transactions/:id. */
+export type AiTransactionPatch = { amount?: number; date?: string; description?: string | null; categoryId?: string | null; accountId?: string };
+/** The body for PATCH /transfers/:id. */
+export type AiTransferPatch = { fromAccountId?: string; toAccountId?: string; amount?: number; fee?: number; date?: string; note?: string | null };
 /**
  * A change to the person's own data that the assistant proposes. Like a draft, it is only a card: nothing happens until the
- * person confirms it in the app, which then calls the ordinary endpoint (PATCH or DELETE /transactions/:id, PUT /budgets/:month,
- * POST /categories).
+ * person confirms it in the app, which then calls the ordinary endpoint (PATCH or DELETE /transactions/:id or /transfers/:id,
+ * PUT /budgets/:month, POST /categories, PATCH /categories/:id, POST /categories/:id/archive, PUT /settings). The theme and
+ * language cards call local setters only.
  */
 export type AiChange =
   | {
@@ -155,17 +164,30 @@ export type AiChange =
       kind: "income" | "expense";
       accountName: string;
       fields: AiFieldChange[];
-      /** The body for PATCH /transactions/:id. */
-      patch: { amount?: number; date?: string; description?: string | null; categoryId?: string | null; accountId?: string };
+      patch: AiTransactionPatch;
     }
   | { id: string; type: "delete_transaction"; transactionId: string; title: string; date: string; amount: number; kind: "income" | "expense"; accountName: string }
+  | {
+      id: string;
+      type: "edit_transfer";
+      transferId: string;
+      date: string;
+      amount: number;
+      fee: number;
+      fromAccountName: string;
+      toAccountName: string;
+      note: string | null;
+      fields: AiFieldChange[];
+      patch: AiTransferPatch;
+    }
+  | { id: string; type: "delete_transfer"; transferId: string; date: string; amount: number; fee: number; fromAccountName: string; toAccountName: string; note: string | null }
   | { id: string; type: "set_budget"; month: string; categoryId: string; categoryName: string; from: number | null; to: number }
   | { id: string; type: "create_category"; name: string; kind: "income" | "expense"; icon: string }
-  /** A new account. `initialBalance` is signed already: negative for a bill (paylater, credit card). Applied with POST /accounts. */
-  | { id: string; type: "create_account"; name: string; accountType: AccountType; initialBalance: number; date: string }
-  | { id: string; type: "rename_account"; accountId: string; from: string; to: string }
-  /** "Make this account match the real balance": the app calls POST /accounts/:id/balance-checks. Balances are signed (a bill is negative). */
-  | { id: string; type: "update_balance"; accountId: string; accountName: string; from: number; to: number; date: string };
+  | { id: string; type: "rename_category"; categoryId: string; kind: "income" | "expense"; from: string; to: string }
+  | { id: string; type: "hide_category"; categoryId: string; kind: "income" | "expense"; name: string }
+  | { id: string; type: "set_cycle_start"; from: number; to: number }
+  | { id: string; type: "set_theme"; to: ThemeName }
+  | { id: string; type: "set_language"; to: LanguageCode };
 /** What the person was looking at when they asked, so "this month" and "here" mean the right thing. */
 export type AiView = {
   screen?: "home" | "stats" | "budget" | "accounts" | "transactions" | "profile" | "other";

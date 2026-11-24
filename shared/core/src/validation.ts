@@ -52,16 +52,22 @@ export const transactionPatchInput = transactionInput
   .partial()
   .refine((v) => Object.keys(v).length > 0, { error: "Nothing to change." });
 
-export const transferInput = z
-  .object({
-    fromAccountId: id,
-    toAccountId: id,
-    amount: positiveAmount,
-    fee: z.number().int().min(0).max(MAX_AMOUNT).default(0),
-    date: day,
-    note: optionalText(200),
-  })
+/** Transfer fields with no defaults and no refinements, shared by the create and patch schemas. */
+const transferBase = z.object({
+  fromAccountId: id,
+  toAccountId: id,
+  amount: positiveAmount,
+  fee: z.number().int().min(0).max(MAX_AMOUNT),
+  date: day,
+  note: optionalText(200),
+});
+
+export const transferInput = transferBase
+  .extend({ fee: transferBase.shape.fee.default(0) })
   .refine((v) => v.fromAccountId !== v.toAccountId, { error: "Source and destination accounts must differ.", path: ["toAccountId"] });
+
+/** Partial transfer edit. At least one field must be present. A missing fee or note stays missing. */
+export const transferPatchInput = transferBase.partial().refine((v) => Object.keys(v).length > 0, { error: "Nothing to change." });
 
 export const balanceCheckInput = z.object({ accountId: id, actualBalance: signedAmount, date: day });
 export const balanceCheckBody = balanceCheckInput.omit({ accountId: true });
@@ -166,3 +172,4 @@ export function firstError(error: z.ZodError): string {
 export type AccountInput = z.output<typeof accountInput>;
 export type TransactionInput = z.output<typeof transactionInput>;
 export type TransferInput = z.output<typeof transferInput>;
+export type TransferPatchInput = z.output<typeof transferPatchInput>;
