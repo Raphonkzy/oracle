@@ -33,7 +33,7 @@ export const APP_GUIDE: GuideEntry[] = [
       "Tap [[Save Transaction]].",
     ],
     notes: [
-      "An expense or a transfer is refused when the account does not hold enough money. Each account keeps its own balance, and money from other accounts is never used.",
+      "An expense or a transfer is refused when it would take an account below zero. A debt account (paylater or credit card) may go below zero, because bills are exempt. Each account keeps its own balance, and money from other accounts is never used.",
       "A transfer moves money between two of your accounts. It is not income and not an expense. An admin fee (optional) is booked as an expense on the account the money leaves.",
       "You can also ask the assistant to add records. It shows cards that you confirm.",
     ],
@@ -76,6 +76,19 @@ export const APP_GUIDE: GuideEntry[] = [
       "Tap [[Update balance]], type the balance you see in the real app and tap [[Update]].",
     ],
     notes: ["The difference is booked as an adjustment, so the history stays complete."],
+  },
+  {
+    id: "stats-insight",
+    topic: "Read the Oracle insight and the AI summary on Statistics",
+    keywords: ["insight", "summary", "analysis", "ai", "wawasan", "ringkasan", "analisis", "rangkuman"],
+    steps: [
+      "Open [[Stats]] in the bottom bar and scroll to the bottom. The [[Oracle insight]] card lists short notes about your numbers for the week, month or year you picked.",
+      "Below it is the [[AI summary]] card, a short plain-language read of the current period. Tap [[Write my summary]] to write it. Once it is written, the button says [[Write it again]].",
+    ],
+    notes: [
+      "The AI summary appears only when the assistant is on (see the assistant topic), and only for the current period. Going back to an earlier period hides it.",
+      "Sometimes the summary is written from your numbers without the AI, and the card then shows [[Written from your numbers without the AI.]]",
+    ],
   },
   {
     id: "budget",
@@ -138,14 +151,18 @@ export const APP_GUIDE: GuideEntry[] = [
     id: "privacy",
     topic: "Hide the balance on Home",
     keywords: ["hide", "privacy", "balance", "sembunyi", "privasi"],
-    steps: ["Open [[Profile]], then [[Preferences]] and turn on [[Hide my balance on Home]].", "On Home, tap the eye to show the amounts for a moment."],
+    steps: [
+      "Open [[Profile]], then [[Preferences]] and turn on [[Hide my balance on Home]]. The amounts on Home then show as dots.",
+      "Tap the eye on Home, or in the [[Where your money is]] card on Statistics, to show the balance. Tap the eye again to hide it.",
+    ],
+    notes: ["The eye keeps its state on both screens. Restarting the app hides the amounts again."],
   },
   {
     id: "assistant",
     topic: "Use or switch off the AI assistant",
     keywords: ["ai", "assistant", "asisten", "oracle", "chat"],
     steps: [
-      "On [[Home]], tap the sparkle button at the top to open [[Ask Oracle]].",
+      "On [[Home]], tap the sparkle button at the top to open [[Ask Oracle]]. The button appears only when the assistant is on, and the Oracle server has it.",
       "To hide the assistant, open [[Profile]], then [[Preferences]] and turn off [[Show the AI assistant]].",
     ],
     notes: ["The assistant only talks about your own money in Oracle. It never saves anything by itself: it shows cards, and you confirm each one."],

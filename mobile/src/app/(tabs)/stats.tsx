@@ -11,7 +11,7 @@ import { StackBar } from "@/components/charts/StackBar";
 import { StatRows } from "@/components/StatRows";
 import { Donut } from "@/components/Donut";
 import { TxRow } from "@/components/TxRow";
-import { usePrefs } from "@/lib/prefs";
+import { useBalanceMask, usePrefs } from "@/lib/prefs";
 import { PeriodNav } from "@/components/PeriodNav";
 import { Icon } from "@/components/Icon";
 import { Button, Card, CutView, ErrorBox, Header, Loading, Screen, Segmented, T } from "@/components/ui";
@@ -44,8 +44,9 @@ export default function Stats() {
   const details = useApi<StatsDetails>("/stats/details", { period, date });
   const trend = useApi<StatsTrend>("/stats/trend", { months: 6, date });
   const { hideBalance } = usePrefs();
-  const [revealed, setRevealed] = useState(false);
-  const money = (n: number) => (hideBalance && !revealed ? "Rp ••••••" : formatRupiah(n));
+  // The eye is shared with Home, so a tap on either screen shows the amounts on both.
+  const { masked, revealed, toggleReveal } = useBalanceMask();
+  const money = (n: number) => (masked ? "Rp ••••••" : formatRupiah(n));
   const [picked, setPicked] = useState<string | null>(null);
   const flow = useApi<StatsFlow>("/stats/flow", { period, date });
   // The budget that goes with a month: the month the pay cycle starts in.
@@ -203,12 +204,12 @@ export default function Stats() {
             <View style={s.between}>
               <T kind="title">{t("Where your money is")}</T>
               {hideBalance ? (
-                <Pressable accessibilityRole="button" accessibilityLabel={revealed ? t("Hide balance") : t("Show balance")} onPress={() => setRevealed((v) => !v)} hitSlop={10}>
+                <Pressable accessibilityRole="button" accessibilityLabel={revealed ? t("Hide balance") : t("Show balance")} onPress={toggleReveal} hitSlop={10}>
                   <Icon name={revealed ? "eyeoff" : "eye"} color={colors.mute} size={22} />
                 </Pressable>
               ) : null}
             </View>
-            {hideBalance && !revealed ? <T kind="mute">{holdings.map((h) => `${t(TYPE_LABELS[h.type])} ${Math.round(h.share * 100)}%`).join(" · ")}</T> : <StackBar segments={holdings.map((h) => ({ label: t(TYPE_LABELS[h.type]), amount: h.amount }))} />}
+            {masked ? <T kind="mute">{holdings.map((h) => `${t(TYPE_LABELS[h.type])} ${Math.round(h.share * 100)}%`).join(" · ")}</T> : <StackBar segments={holdings.map((h) => ({ label: t(TYPE_LABELS[h.type]), amount: h.amount }))} />}
             {billsOwed > 0 ? <T kind="mute" style={{ color: colors.danger }}>{t("Bills you owe: {amount}", { amount: money(billsOwed) })}</T> : null}
           </Card>
         ) : null}

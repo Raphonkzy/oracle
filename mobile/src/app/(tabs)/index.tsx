@@ -16,7 +16,7 @@ import { t } from "@/i18n";
 import { catName } from "@/i18n/labels";
 import { formatDayHeading } from "@/i18n/format";
 import { useAiEnabled } from "@/lib/ai";
-import { usePrefs } from "@/lib/prefs";
+import { useBalanceMask, usePrefs } from "@/lib/prefs";
 import { useApi } from "@/lib/hooks";
 import { useReportView } from "@/lib/view-context";
 import { authClient } from "@/lib/auth-client";
@@ -64,9 +64,8 @@ export default function Home() {
   const aiEnabled = useAiEnabled();
   const unreadAnswer = useChatSession().unread;
   const { hideBalance } = usePrefs();
-  // With "Hide my balance" on, amounts show as dots until the eye is tapped. Leaving the screen hides them again.
-  const [revealed, setRevealed] = useState(false);
-  const masked = hideBalance && !revealed;
+  // With "Hide my balance" on, amounts show as dots until the eye is tapped. The eye is shared with Statistics.
+  const { masked, revealed, toggleReveal } = useBalanceMask();
   const money = (n: number) => (masked ? "Rp ••••••" : formatRupiah(n));
 
   if (loading && !data) return <Screen><Loading /></Screen>;
@@ -130,7 +129,7 @@ export default function Home() {
         </CutView>
         </Pressable>
         {hideBalance ? (
-          <Pressable accessibilityRole="button" accessibilityLabel={revealed ? t("Hide balance") : t("Show balance")} onPress={() => setRevealed((v) => !v)} hitSlop={12} style={{ position: "absolute", top: 50, right: 22 }}>
+          <Pressable accessibilityRole="button" accessibilityLabel={revealed ? t("Hide balance") : t("Show balance")} onPress={toggleReveal} hitSlop={12} style={{ position: "absolute", top: 50, right: 22 }}>
             <Icon name={revealed ? "eyeoff" : "eye"} color={colors.accentInk} size={26} />
           </Pressable>
         ) : null}

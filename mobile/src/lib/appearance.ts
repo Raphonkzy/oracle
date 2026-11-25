@@ -2,7 +2,7 @@ import type { ThemeName } from "@oracle/core";
 import { useSyncExternalStore } from "react";
 import { Appearance } from "react-native";
 import { type ConcreteTheme, applyTheme } from "@/theme";
-import { DEFAULT_THEME, THEME_KEY, parseSavedTheme, resetTheme } from "./appearance-core";
+import { DEFAULT_THEME, THEME_KEY, parseSavedTheme } from "./appearance-core";
 import { getStored, setStored } from "./storage";
 
 /**
@@ -57,11 +57,4 @@ export async function setAppearance(name: ThemeName): Promise<void> {
   chosen = name;
   show();
   await setStored(THEME_KEY, name);
-}
-
-/** Puts the theme back to the default and saves it. The language is not touched. */
-export async function resetAppearance(): Promise<void> {
-  chosen = DEFAULT_THEME;
-  show();
-  await resetTheme(setStored);
 }
