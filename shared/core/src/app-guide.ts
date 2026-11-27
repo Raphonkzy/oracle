@@ -49,7 +49,7 @@ export const APP_GUIDE: GuideEntry[] = [
     ],
     notes: [
       "The assistant can change or delete a transfer as a card that you confirm. You can also open the transfer and tap [[Delete]], which removes both sides and the fee.",
-      "Changes and deletions that would leave an account below zero are refused.",
+      "A change or deletion that leaves any account that is not a debt account below zero is refused. Debt accounts (paylater and credit card) can go below zero, because they hold bills.",
     ],
   },
   {
